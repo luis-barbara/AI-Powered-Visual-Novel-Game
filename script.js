@@ -1,19 +1,16 @@
-async function sendPlayerInput() {
-    const playerInput = document.getElementById("text-input").value;
-
-    // Send input to the backend to generate story and images
-    const response = await fetch('http://localhost:8000/game_action', {
-        method: 'POST',
+async function sendMessage() {
+    const userInput = document.getElementById("user-input").value;
+    
+    const response = await fetch("http://localhost:8000/generate_story", {
+        method: "POST",
         headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json"
         },
-        body: JSON.stringify({ user_input: playerInput }),
+        body: JSON.stringify({ message: userInput })
     });
 
     const data = await response.json();
-
-    // Update story text and images
-    document.getElementById("story-text").textContent = data.story_text;
-    document.getElementById("image").src = data.background_image;
-    document.getElementById("character").src = data.character_image;
+    
+    document.getElementById("story-text").innerText = data.story_text;
+    document.getElementById("story-image").src = data.image_url;
 }

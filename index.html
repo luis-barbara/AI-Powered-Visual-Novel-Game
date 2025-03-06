@@ -1,19 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Visual Novel</title>
+    <title>Visual Novel AI</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>AI Visual Novel Game</h1>
-    <div id="story-text">The story begins...</div>
-    <img id="image" src="" alt="Background Image" />
-    <img id="character" src="" alt="Character Image" />
-    <textarea id="text-input" placeholder="Type your response here..."></textarea>
-    <button onclick="sendPlayerInput()">Send</button>
+    <div class="container">
+        <h1>Visual Novel AI</h1>
+        <img id="story-image" src="" alt="Imagem da História">
+        <p id="story-text">A história aparecerá aqui...</p>
+        <input type="text" id="user-input" placeholder="Digite sua ação...">
+        <button onclick="sendMessage()">Enviar</button>
+    </div>
 
     <script src="script.js"></script>
 </body>
 </html>
+
