@@ -20,7 +20,7 @@ def generate_image(prompt):
 if __name__ == "__main__":
     user_prompt = input("Digite um prompt para gerar a imagem: ")
     image_url = generate_image(user_prompt)
-    print("\nImagem gerada:", image_url)
+    print("\n Imagem gerada:", image_url)
 
 
     

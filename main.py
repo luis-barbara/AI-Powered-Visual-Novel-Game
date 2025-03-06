@@ -1,40 +1,61 @@
-import openai
-import os
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import os
+import openai
 from dotenv import load_dotenv
 
-# Carregar a chave da API da OpenAI do arquivo .env
+# Carregar variáveis de ambiente do arquivo .env (se existir)
 load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-openai.api_key = OPENAI_API_KEY
+# Inicializar cliente OpenAI
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
+# Criar aplicação FastAPI
 app = FastAPI()
 
-# Modelo de dados para receber input do usuário
-class UserInput(BaseModel):
-    message: str
+# Configurar CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite todas as origens (não recomendado para produção)
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos os métodos (GET, POST, OPTIONS, etc.)
+    allow_headers=["*"],  # Permite todos os cabeçalhos
+)
 
+# Definir estrutura da requisição
+class StoryRequest(BaseModel):
+    prompt: str
+    max_tokens: int = 100
+
+# Rota para gerar uma história
 @app.post("/generate_story")
-async def generate_story(user_input: UserInput):
-    """Gera texto e imagem com base na entrada do jogador."""
+async def generate_story(request: StoryRequest):
+    try:
+        # Solicitação à OpenAI para gerar a história
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": request.prompt}],
+            max_tokens=request.max_tokens
+        )
 
-    # Chamada para o ChatGPT para criar a história
-    text_response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": user_input.message}]
-    )
-    story_text = text_response["choices"][0]["message"]["content"]
+        # Solicitação à OpenAI para gerar a imagem usando o DALL·E
+        image_response = openai.Image.create(
+            prompt=request.prompt,
+            n=1,
+            size="1024x1024"
+        )
 
-    # Chamada para o DALL·E para gerar imagem baseada no contexto da história
-    image_response = openai.Image.create(
-        prompt=story_text,  # Gerar a imagem baseada na narrativa
-        n=1,
-        size="1024x1024"
-    )
-    image_url = image_response["data"][0]["url"]
+        # Obter a URL da imagem gerada
+        image_url = image_response['data'][0]['url']
 
-    return {"story_text": story_text, "image_url": image_url}
+        # Retorna a história e a URL da imagem
+        return {"story": response['choices'][0]['message']['content'], "image_url": image_url}
+    
+    except Exception as e:
+        return {"error": str(e)}
 
-# Para rodar o servidor: `uvicorn backend:app --reload`
+# Rota padrão
+@app.get("/")
+async def home():
+    return {"message": "API de geração de histórias com OpenAI"}
