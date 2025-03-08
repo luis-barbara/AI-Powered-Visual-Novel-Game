@@ -9,13 +9,23 @@
 <body>
     <div class="container">
         <h1>Visual Novel AI</h1>
-        <img id="story-image" src="" alt="Imagem da História">
-        <p id="story-text">A história aparecerá aqui...</p>
-        <input type="text" id="user-input" placeholder="Digite sua ação...">
-        <button onclick="sendMessage()">Enviar</button>
+        
+        <!-- Container para as imagens -->
+        <div id="background-container">
+            <img id="background" src="background.jpg" alt="Background">
+            <img id="character" src="character.png" alt="Character">
+        </div>
+
+        <!-- Texto agora separado do fundo -->
+        <div id="story-container">
+            <p id="story">O sol se punha no horizonte. João olhou para trás e sorriu. A aventura apenas começava.</p>
+        </div>
+
+        <!-- Campo de input para o jogador -->
+        <input type="text" id="player_input" placeholder="Digite sua ação...">
+        <button id="submit_button">Enviar</button>
     </div>
 
     <script src="script.js"></script>
 </body>
 </html>
-
