@@ -46,20 +46,24 @@ characters_data = game_data["characters"]
 game_sessions = {}
 
 def generate_text(session_id: str, player_input: str, max_characters: int = 500):
-    """Generate story text using GPT-4 based on player input, ensuring a complete narrative with a start, middle, and end."""
+    """Generate a complete story with a clear and satisfying end."""
     history = game_sessions.get(session_id, [])
     
     # If no history exists, create an engaging introduction
     if not history:
         prompt = f"""
-        Write a quick and straightforward story with a clear beginning, middle, and end. Avoid long descriptions and keep it simple. Ensure:
-        - A **start** that introduces the setting and main character.
-        - A **middle** that provides conflict or action.
-        - An **end** that concludes the story in a satisfying way, ensuring it doesn't leave any loose ends.
-        - The narrative must **finish**. Even if there is space for more, you should complete the story within the given length. 
+        Write a short, complete story with a clear structure:
+        - **Beginning**: Introduce the main character, setting, and their goal.
+        - **Middle**: The character faces a challenge or conflict.
+        - **End**: Provide a conclusion where the conflict is resolved, and the story ends definitively.
+
+        The story should:
+        - Be **one paragraph**.
+        - **End with a period** and not be cut off.
+        - Be concise and clear, with no loose ends. 
 
         Player input: {player_input}
-        Write a very short story:
+        Write the story following these guidelines and ensure it finishes properly with a complete ending.
         """
     else:
         # Continue the story based on recent history
@@ -91,9 +95,9 @@ def generate_text(session_id: str, player_input: str, max_characters: int = 500)
         # Extract the story text from the response
         story_output = response.choices[0].message.content.strip()
         
-        # Ensure we are within the character limit
-        if len(story_output) > max_characters:
-            story_output = story_output[:max_characters]
+         # Ensure the story ends with a period
+        if not story_output.endswith('.'):
+            story_output += '.'
         
         # Add to session history
         history.append(f"Player: {player_input}\nStory: {story_output}")
@@ -102,6 +106,7 @@ def generate_text(session_id: str, player_input: str, max_characters: int = 500)
         return story_output
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating story: {str(e)}")
+
 
 def generate_dynamic_images(player_input: str):
     """Generate background and character images using DALL·E."""
